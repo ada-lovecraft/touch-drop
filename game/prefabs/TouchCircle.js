@@ -6,6 +6,7 @@ var TouchCircle = function(game, x, y, color) {
   // initialize your prefab here
   this.body.data.gravityScale = 1;
   this.body.restitution = 0.25;
+  this.growSpeed = 1;
 };
 
 TouchCircle.prototype = Object.create(Circle.prototype);
@@ -18,7 +19,7 @@ TouchCircle.prototype.update = function() {
 };
 
 TouchCircle.prototype.grow = function() {
-  this.size++;
+  this.size += this.growSpeed;
   this.body.setCircle(this.size);
   this.body.setZeroForce();
   this.body.setZeroVelocity();

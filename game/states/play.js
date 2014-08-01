@@ -28,12 +28,14 @@
     this.onTransitionComplete = new Phaser.Signal();
     this.transitionSprite = null;
     this.hud = null;
+    this.horizontalDivider = null;
+    this.verticalDivider = null;x
   }
 
   Play.prototype = {
     init: function(data) {
       data = data || {};
-      this.levelCounter = data.levelCounter || 0;
+      this.levelCounter = data.levelCounter || 17;
       this.level = Levels[this.levelCounter];
       this.maxFill = this.game.height;
     },
@@ -85,6 +87,8 @@
       circleBallContactMaterial.restitution = 1.0;
 
 
+      this.
+
       this.transitionSprite = new TransitionSprite(this.game, Colors.PLAYER);
       this.add.existing(this.transitionSprite);
       this.game.input.onDown.add(this.createPlayerCircle, this);
@@ -118,6 +122,7 @@
         circle.body.collides(this.playerCollisionGroup, this.endPlayerCircle, this);
         circle.body.collides(this.ballCollisionGroup, this.testCollision, this);
         circle.body.setMaterial(this.circleMaterial);
+        circle.growSpeed = this.level.growSpeed;
         this.circles.add(circle);
         this.activeCircle = circle;
       }
@@ -164,7 +169,7 @@
       this.hud.visible = !this.level.hideHUD;
     },
     die: function() {
-      this.game.state.start('gameover');
+      this.game.state.start('gameover', true, false, {levelCounter: this.levelCounter});
     },
     nextLevel: function() {
 

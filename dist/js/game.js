@@ -151,7 +151,7 @@ HUD.prototype.updateMaxLives = function(lives) {
 HUD.prototype.updateLivesDisplay = function() {
   var ctx = this.livesBMD.ctx;
   ctx.fillStyle = Colors.PLAYER;
-  ctx.strokeStyle = Colors.TEXT;
+  ctx.strokeStyle = Colors.PLAYER;
   var circleSpacingX = this.barWidth / 10;
   var circleSpacingY = 14;
 
@@ -163,8 +163,10 @@ HUD.prototype.updateLivesDisplay = function() {
     ctx.arc((circleSpacingX * x) + 6, (circleSpacingY * y) + 6, 5, 0, Math.PI * 2);
     if(i < this.health) {
       ctx.fill();
+    } else {
+      ctx.stroke();
     }
-    ctx.stroke();
+
     x++;
     if(i > 0 && i % 10 === 0) {
       y++;
@@ -184,6 +186,7 @@ var TouchCircle = function(game, x, y, color) {
   // initialize your prefab here
   this.body.data.gravityScale = 1;
   this.body.restitution = 0.25;
+  this.growSpeed = 1;
 };
 
 TouchCircle.prototype = Object.create(Circle.prototype);
@@ -196,7 +199,7 @@ TouchCircle.prototype.update = function() {
 };
 
 TouchCircle.prototype.grow = function() {
-  this.size++;
+  this.size += this.growSpeed;
   this.body.setCircle(this.size);
   this.body.setZeroForce();
   this.body.setZeroVelocity();
@@ -291,24 +294,29 @@ module.exports = Boot;
 },{}],7:[function(require,module,exports){
 
 'use strict';
-function GameOver() {}
+function GameOver() {
+  this.levelCounter = null;
+}
 
 GameOver.prototype = {
+  init: function(data) {
+    this.levelCounter = data.levelCounter;
+  },
   preload: function () {
 
   },
   create: function () {
 
     this.titleText = this.game.add.bitmapText(200, 100, 'minecraftia','Game Over\n',64);
-    
+
     this.congratsText = this.game.add.bitmapText(320, 200, 'minecraftia','You win!',32);
 
     this.instructionText = this.game.add.bitmapText(330, 300, 'minecraftia','Tap to play again!',12);
-    
+
   },
   update: function () {
     if(this.game.input.activePointer.justPressed()) {
-      this.game.state.start('play');
+      this.game.state.start('play', true,false, {levelCounter: this.levelCounter});
     }
   }
 };
@@ -378,12 +386,14 @@ module.exports = Menu;
     this.onTransitionComplete = new Phaser.Signal();
     this.transitionSprite = null;
     this.hud = null;
+    this.horizontalDivider = null;
+    this.verticalDivider = null;x
   }
 
   Play.prototype = {
     init: function(data) {
       data = data || {};
-      this.levelCounter = data.levelCounter || 0;
+      this.levelCounter = data.levelCounter || 17;
       this.level = Levels[this.levelCounter];
       this.maxFill = this.game.height;
     },
@@ -435,6 +445,8 @@ module.exports = Menu;
       circleBallContactMaterial.restitution = 1.0;
 
 
+      this.
+
       this.transitionSprite = new TransitionSprite(this.game, Colors.PLAYER);
       this.add.existing(this.transitionSprite);
       this.game.input.onDown.add(this.createPlayerCircle, this);
@@ -468,6 +480,7 @@ module.exports = Menu;
         circle.body.collides(this.playerCollisionGroup, this.endPlayerCircle, this);
         circle.body.collides(this.ballCollisionGroup, this.testCollision, this);
         circle.body.setMaterial(this.circleMaterial);
+        circle.growSpeed = this.level.growSpeed;
         this.circles.add(circle);
         this.activeCircle = circle;
       }
@@ -514,7 +527,7 @@ module.exports = Menu;
       this.hud.visible = !this.level.hideHUD;
     },
     die: function() {
-      this.game.state.start('gameover');
+      this.game.state.start('gameover', true, false, {levelCounter: this.levelCounter});
     },
     nextLevel: function() {
 
@@ -702,7 +715,8 @@ module.exports = [
     hideHUD: true,
     enemies: 0,
     lives: 1,
-    maxBallSpeed: 10
+    maxBallSpeed: 10,
+    growSpeed: 1
   },
   {
     id: 1,
@@ -713,7 +727,8 @@ module.exports = [
     enemies: 0,
     lives: 3,
     hideHUD: true,
-    maxBallSpeed: 10
+    maxBallSpeed: 10,
+    growSpeed: 1
   },
   {
     id: 2,
@@ -723,138 +738,186 @@ module.exports = [
     scoreMultiplier: 0,
     enemies: 0,
     lives: 10,
-    maxBallSpeed: 10
+    maxBallSpeed: 10,
+    growSpeed: 1
   },
   {
     id: 3,
     name: 'Intro 4',
     text: 'You Lose A Life and Your Current Circle\'s Progress If You Get Hit By A Black Circle' ,
-    targetPercent: 0.50,
+    targetPercent: 0.10,
     scoreMultiplier: 0,
-    enemies: 1,
+    enemies: 40,
     lives: 10,
-    maxBallSpeed: 200
+    maxBallSpeed: 200,
+    growSpeed: 1
   },
   {
     id: 4,
     name: 'Level 1',
-    text: 'Welcome To My Game... This is an Easy One.' ,
-    targetPercent: 0.25,
+    text: 'Everything can change.' ,
+    targetPercent: 0.5,
     scoreMultiplier: 1,
-    enemies: 1,
+    enemies: 8,
     lives: 5,
-    maxBallSpeed: 200
+    maxBallSpeed: 800,
+    growSpeed: 1
   },
   {
     id: 5,
     name: 'Level 2',
-    text: 'A Bit Harder... But Only A Bit' ,
-    targetPercent: 0.35,
+    text: 'Scratch that... Everything -will- change.' ,
+    targetPercent: 0.5,
     scoreMultiplier: 1,
-    enemies: 2,
+    enemies: 8,
     lives: 5,
-    maxBallSpeed: 200
+    maxBallSpeed: 800,
+    growSpeed: 1
   },
   {
     id: 5,
     name: 'Level 3',
-    text: 'Try This One' ,
-    targetPercent: 0.5,
+    text: 'And everyone is different.' ,
+    targetPercent: 0.75,
     scoreMultiplier: 1,
-    enemies: 3,
+    enemies: 8,
     lives: 5,
-    maxBallSpeed: 200
+    maxBallSpeed: 800,
+    growSpeed: 1
   },
   {
     id: 6,
     name: 'Level 4',
-    text: 'Let\'s Ramp It Up A Bit...' ,
-    targetPercent: 0.75,
+    text: 'Some of us grow faster than others' ,
+    targetPercent: 0.9,
     scoreMultiplier: 1,
-    enemies: 6,
+    enemies: 8,
     lives: 5,
-    maxBallSpeed: 200
-  },
-  {
-    id: 6,
-    name: 'Level 5',
-    text: 'No More Hand Holding' ,
-    targetPercent: 1.0,
-    scoreMultiplier: 1,
-    enemies: 6,
-    lives: 5,
-    maxBallSpeed: 200
-  },
-  {
-    id: 6,
-    name: 'Level 6',
-    text: '...' ,
-    targetPercent: 1.0,
-    scoreMultiplier: 1,
-    enemies: 6,
-    lives: 6,
-    maxBallSpeed: 200
-  },
-
-  {
-    id: 6,
-    name: 'Level 7',
-    text: '* adjusts the ball speed *' ,
-    targetPercent: 0.75,
-    scoreMultiplier: 1,
-    enemies: 4,
-    lives: 6,
-    maxBallSpeed: 600
+    maxBallSpeed: 800,
+    growSpeed: 2.5
   },
   {
     id: 7,
-    name: 'Level 8',
-    text: '* adjusts number of enemies *' ,
+    name: 'Level 5',
+    text: 'Some of us move faster than others.' ,
     targetPercent: 0.75,
     scoreMultiplier: 1,
     enemies: 8,
-    lives: 6,
-    maxBallSpeed: 600
+    lives: 5,
+    maxBallSpeed: 1600,
+    growSpeed: 1.5
   },
   {
     id: 8,
-    name: 'Level 9',
-    text: '* adjusts difficulty *' ,
-    targetPercent: 1.0,
+    name: 'Level 6',
+    text: 'Some of us have more enemies than others...' ,
+    targetPercent: 0.75,
     scoreMultiplier: 1,
-    enemies: 9,
-    lives: 6,
-    maxBallSpeed: 600
+    enemies: 16,
+    lives: 5,
+    maxBallSpeed: 800,
+    growSpeed: 1.5
   },
   {
     id: 9,
-    name: 'Level 10',
-    text: 'There... I think I\'ve Got It' ,
-    targetPercent: 0.35,
+    name: 'Level 7',
+    text: 'And some of us live longer than others.' ,
+    targetPercent: 0.75,
     scoreMultiplier: 1,
-    enemies: 12,
+    enemies: 16,
     lives: 10,
-    maxBallSpeed: 1000
+    maxBallSpeed: 1200,
+    growSpeed: 1.5
   },
   {
     id: 10,
-    name: 'Level 11',
-    text: 'Having fun yet?' ,
-    targetPercent: 0.5,
+    name: 'Level 8',
+    text: 'Some of us don\'t change.' ,
+    targetPercent: 0.75,
     scoreMultiplier: 1,
-    enemies: 12,
+    enemies: 16,
     lives: 10,
-    maxBallSpeed: 1000
+    maxBallSpeed: 1200,
+    growSpeed: 1.5
   },
   {
     id: 11,
-    name: 'Level 12',
-    text: 'ZOOOM!' ,
+    name: 'Level 9',
+    text: 'Ever.' ,
+    targetPercent: 0.75,
+    scoreMultiplier: 1,
+    enemies: 16,
+    lives: 10,
+    maxBallSpeed: 1200,
+    growSpeed: 1.5
+  },
+  {
+    id: 12,
+    name: 'Level 10',
+    text: 'Some of Us Are Exciting.' ,
     targetPercent: 0.5,
     scoreMultiplier: 1,
-    enemies: 2,
-    lives: 15,
-    maxBallSpeed: 6000
+    enemies: 10,
+    lives: 5,
+    maxBallSpeed: 3000,
+    growSpeed: 5
+
+  },
+  {
+    id: 13,
+    name: 'Level 11',
+    text: 'Some of Us Are... Less So.',
+    targetPercent: 0.05,
+    scoreMultiplier: 1,
+    enemies: 30,
+    lives: 8,
+    maxBallSpeed: 600,
+    growSpeed: 0.25
+  },
+  {
+    id: 14,
+    name: 'Level 11',
+    text: 'Some of Us Feel Alone in a Crowd' ,
+    targetPercent: 0.025,
+    scoreMultiplier: 1,
+    enemies: 100,
+    lives: 1,
+    maxBallSpeed: 1,
+    growSpeed: 0.1
+  },
+  {
+    id: 15,
+    name: 'Level 11',
+    text: 'Others Revel In It' ,
+    targetPercent: 0.5,
+    scoreMultiplier: 1,
+    enemies: 100,
+    lives: 10,
+    maxBallSpeed: 1,
+    growSpeed: 3
+  },
+  {
+    id: 16,
+    name: 'Level 12',
+    text: 'Some of Us Go Through Life Alone' ,
+    targetPercent: 1,
+    scoreMultiplier: 1,
+    enemies: 0,
+    lives: 10,
+    maxBallSpeed: 1,
+    growSpeed: 5
+  },
+  {
+    id: 16,
+    name: 'Level 12',
+    text: 'Some of Us Find Partners' ,
+    targetPercent: 1,
+    scoreMultiplier: 1,
+    enemies: 0,
+    lives: 10,
+    maxBallSpeed: 1,
+    growSpeed: 5,
+    mirrorHorizontal: true
   },
 ];
 

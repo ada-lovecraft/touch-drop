@@ -76,7 +76,7 @@ HUD.prototype.updateMaxLives = function(lives) {
 HUD.prototype.updateLivesDisplay = function() {
   var ctx = this.livesBMD.ctx;
   ctx.fillStyle = Colors.PLAYER;
-  ctx.strokeStyle = Colors.TEXT;
+  ctx.strokeStyle = Colors.PLAYER;
   var circleSpacingX = this.barWidth / 10;
   var circleSpacingY = 14;
 
@@ -88,8 +88,10 @@ HUD.prototype.updateLivesDisplay = function() {
     ctx.arc((circleSpacingX * x) + 6, (circleSpacingY * y) + 6, 5, 0, Math.PI * 2);
     if(i < this.health) {
       ctx.fill();
+    } else {
+      ctx.stroke();
     }
-    ctx.stroke();
+
     x++;
     if(i > 0 && i % 10 === 0) {
       y++;
