@@ -1,0 +1,8 @@
+module.exports = {
+  BACKGROUND: '#D9DADE',
+  ENEMY: '#2C3230',
+  PLAYER: '#95040B',
+  TEXT: '#0C0304',
+  BAR: '#BC0100',
+  BAR_BACKGROUND: '#7C8575'
+};
