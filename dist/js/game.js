@@ -387,7 +387,7 @@ module.exports = Menu;
     this.transitionSprite = null;
     this.hud = null;
     this.horizontalDivider = null;
-    this.verticalDivider = null;x
+    this.verticalDivider = null;
   }
 
   Play.prototype = {
@@ -906,19 +906,7 @@ module.exports = [
     lives: 10,
     maxBallSpeed: 1,
     growSpeed: 5
-  },
-  {
-    id: 16,
-    name: 'Level 12',
-    text: 'Some of Us Find Partners' ,
-    targetPercent: 1,
-    scoreMultiplier: 1,
-    enemies: 0,
-    lives: 10,
-    maxBallSpeed: 1,
-    growSpeed: 5,
-    mirrorHorizontal: true
-  },
+  }
 ];
 
 },{}]},{},[1])

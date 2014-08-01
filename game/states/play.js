@@ -29,7 +29,7 @@
     this.transitionSprite = null;
     this.hud = null;
     this.horizontalDivider = null;
-    this.verticalDivider = null;x
+    this.verticalDivider = null;
   }
 
   Play.prototype = {
