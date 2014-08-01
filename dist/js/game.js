@@ -444,9 +444,6 @@ module.exports = Menu;
       circleBallContactMaterial.friction = 0.0;
       circleBallContactMaterial.restitution = 1.0;
 
-
-      this.
-
       this.transitionSprite = new TransitionSprite(this.game, Colors.PLAYER);
       this.add.existing(this.transitionSprite);
       this.game.input.onDown.add(this.createPlayerCircle, this);
