@@ -33,7 +33,7 @@
   Play.prototype = {
     init: function(data) {
       data = data || {};
-      this.levelCounter = data.levelCounter || Levels.length - 2;
+      this.levelCounter = data.levelCounter || 0;
       this.level = Levels[this.levelCounter];
       this.maxFill = this.game.height;
     },
